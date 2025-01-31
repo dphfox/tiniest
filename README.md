@@ -19,7 +19,6 @@ everything you need in it.
 - Full stack trace capture for errors
 - Pretty-formatted summaries of reports with emoji, Unicode, and colour
 - Benchmark how long tests run for with your own time source
-- 
 
 ## Usage
 
