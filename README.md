@@ -20,6 +20,12 @@ everything you need in it.
 - Pretty-formatted summaries of reports with emoji, Unicode, and colour
 - Benchmark how long tests run for with your own time source
 
+### Planned
+
+- Snapshots with your own serialiser
+- Test discovery with your own IO system
+- Offending line snippers with your own IO system
+
 ## Usage
 
 Require `tiniest` in any runtime you like, then use its functions:
