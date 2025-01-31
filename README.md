@@ -2,10 +2,7 @@
 	<img src="github/logo.svg" alt="tiniest">
 </h1>
 
-`tiniest` is a minimal, portable testing library for Luau. It's one file with
-everything you need in it.
-
-`tiniest` is built on a few principles:
+`tiniest` is a minimal, portable testing library for Luau, built on a few principles:
 
 - Simple, idiomatic Luau throughout.
 - Zero dependencies.
