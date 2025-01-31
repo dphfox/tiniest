@@ -19,9 +19,9 @@
 
 ### Planned
 
+- Pretty asserts
 - Snapshots with your own serialiser
 - Test discovery with your own IO system
-- Offending line snippets with your own IO system
 
 ## Usage
 
