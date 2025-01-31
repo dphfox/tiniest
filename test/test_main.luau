@@ -6,6 +6,10 @@ local function my_test_suite()
 
 	describe("some cool features", function()
 		test("it works", function()
+			assert(2 + 2 == 4)
+		end)
+
+		test("it doesn't work", function()
 			assert(2 + 2 == 5)
 		end)
 	end)
