@@ -3,19 +3,18 @@
 
 local tiniest_plugin = require("tiniest_plugin")
 local tiniest = require("tiniest")
+type Test = tiniest.Test
 type TestRunResult = tiniest.TestRunResult
 type RunResult = tiniest.RunResult
 
 export type Options = {
-	plugins: nil | {Plugin},
+	plugins: nil | {tiniest_plugin.Plugin},
 	disable_emoji: boolean?,
 	disable_unicode: boolean?,
-	disable_colour: boolean?
-}
-
-export type Plugin = {
-	add_annotations: nil | (TestRunResult, Options, (string) -> ()) -> (),
-	add_line_items: nil | (RunResult, Options, (string) -> ()) -> ()
+	disable_colour: boolean?,
+	disable_output: nil | {
+		after_run: boolean?
+	}
 }
 
 local tiniest_pretty = {}
@@ -158,8 +157,9 @@ function tiniest_pretty.configure(
 	end
 
 	local self = {}
+	self.is_tiniest_plugin = true
 
-	function self.format(
+	function self.format_run(
 		run_result: RunResult
 	): string
 		local lines = {}
@@ -167,25 +167,25 @@ function tiniest_pretty.configure(
 		local pretty_results = {}
 		for _, test in run_result.tests do
 			local result = run_result.individual[test]
-			local painted_labels = table.clone(test.labels)
-			for index, label in painted_labels do
-				local style = result.status .. if index < #painted_labels then "_dim" else ""
-				painted_labels[index] = paint[style](label)
-			end
-			local annotations = ""
-			local function add_annotation(
-				annotation: string
-			): ()
-				annotations ..= ` - {annotation}`
-			end
-			plugins.notify("add_annotations", result, options, add_annotation)
+		local painted_labels = table.clone(test.labels)
+		for index, label in painted_labels do
+			local style = result.status .. if index < #painted_labels then "_dim" else ""
+			painted_labels[index] = paint[style](label)
+		end
+		local annotations = ""
+		local function add_annotation(
+			annotation: string
+		): ()
+			annotations ..= ` - {annotation}`
+		end
+		plugins.notify("add_annotations", result, options, add_annotation)
 			local pretty = {
-				test = test,
-				result = result,
-				crumbs = table.concat(painted_labels, paint[result.status .. "_dim"](crumb_trail)),
-				icon = status_icons[result.status],
-				annotations = paint.dim(annotations)
-			}
+			test = test,
+			result = result,
+			crumbs = table.concat(painted_labels, paint[result.status .. "_dim"](crumb_trail)),
+			icon = status_icons[result.status],
+			annotations = paint.dim(annotations)
+		}
 			table.insert(pretty_results, pretty)
 		end
 
@@ -236,6 +236,16 @@ function tiniest_pretty.configure(
 		end
 
 		return table.concat(lines, "\n")
+	end
+
+	function self.after_run(
+		run_result: RunResult,
+		_
+	): ()
+		if options.disable_output and options.disable_output.after_run then 
+			return 
+		end
+		print(self.format_run(run_result))
 	end
 
 	return self

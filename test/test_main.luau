@@ -5,10 +5,10 @@ local tiniest_time = require("../src/tiniest_time").configure({
 	get_timestamp = os.clock
 })
 local tiniest_pretty = require("../src/tiniest_pretty").configure({
-	plugins = { tiniest_time }
+	plugins = { tiniest_time :: any }
 })
 local tiniest = require("../src/tiniest").configure({
-	plugins = { tiniest_time }
+	plugins = { tiniest_time :: any, tiniest_pretty }
 }) 
 
 local function my_test_suite()
@@ -18,6 +18,8 @@ local function my_test_suite()
 
 	describe("some cool features", function()
 		test("it works", function()
+			local start = os.clock()
+			repeat until os.clock() - start > 0.1
 			expect(2 + 2).is({
 				foo = 2,
 				bar = true
@@ -27,5 +29,4 @@ local function my_test_suite()
 end
 
 local tests = tiniest.collect_tests(my_test_suite)
-local results = tiniest.run_tests(tests, {})
-print(tiniest_pretty.format(results))
+tiniest.run_tests(tests, {})

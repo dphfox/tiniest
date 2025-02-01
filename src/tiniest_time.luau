@@ -3,7 +3,6 @@
 
 local tiniest = require("tiniest")
 local tiniest_pretty = require("tiniest_pretty")
-type Plugin = tiniest.Plugin & tiniest_pretty.Plugin
 type Test = tiniest.Test
 
 export type TestRunResult = tiniest.TestRunResult & {
@@ -42,9 +41,10 @@ end
 
 function tiniest_time.configure(
 	options: Options
-): Plugin
+)
 	
-	local self: Plugin = {}
+	local self = {}
+	self.is_tiniest_plugin = true
 
 	local start_times = {}
 

@@ -1,6 +1,10 @@
 -- From dphfox/tiniest, licenced under MIT
 --!strict
 
+export type Plugin = {
+	is_tiniest_plugin: true
+}
+
 local tiniest_plugin = {}
 
 function tiniest_plugin.configure(

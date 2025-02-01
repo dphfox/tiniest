@@ -51,17 +51,10 @@ export type FailTestRunResult = {
 }
 
 export type Options = {
-	plugins: nil | {Plugin}
+	plugins: nil | {tiniest_plugin.Plugin}
 }
 
 export type RunOptions = {}
-
-export type Plugin = {
-	before_run: nil | ({Test}, RunOptions) -> (),
-	after_run: nil | (RunResult, RunOptions) -> (),
-	before_test: nil | (Test, RunOptions) -> (),
-	after_test: nil | (Test, TestRunResult, RunOptions) -> ()
-}
 
 local function catch_errors(func: any, ...)
 	local outer_trace
