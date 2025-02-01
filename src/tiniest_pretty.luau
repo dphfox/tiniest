@@ -156,6 +156,12 @@ function tiniest_pretty.configure(
 			:gsub("false", paint.keyword)
 			:gsub("nil", paint.keyword)
 	end
+	local function indent(
+		passage: string,
+		indentation: string
+	): string
+		return passage:gsub("\n", "\n" .. indentation)
+	end
 
 	local self = {}
 
@@ -191,9 +197,9 @@ function tiniest_pretty.configure(
 				local code = pretty.result.error.code
 				if code ~= nil then
 					local num_length = string_len(code.line)
-					local empty_margin = string.rep(" ", num_length + 1) .. paint.dim(margin_line)
+					local empty_margin = string.rep(" ", num_length + 1) .. paint.dim(margin_line) .. " "
 					table.insert(lines, empty_margin)
-					table.insert(lines, `{paint.dim(`{code.line} {margin_line}`)} {syntax(code.snippet)}`)
+					table.insert(lines, `{paint.dim(`{code.line} {margin_line}`)} {indent(syntax(code.snippet), empty_margin)}`)
 					table.insert(lines, empty_margin)
 				end
 				local trace = pretty.result.error.trace:gsub("\n+$", "")

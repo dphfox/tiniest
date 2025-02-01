@@ -1,6 +1,8 @@
 -- From dphfox/tiniest, licenced under MIT
 --!strict
 
+local tiniest_quote = require("./tiniest_quote")
+
 local tiniest_expect = {}
 
 type Context = {
@@ -15,24 +17,12 @@ local context: Context = {
 	params = {}
 }
 
-local function quote(
-	x: unknown
-): string
-	if typeof(x) == "string" then
-		return string.format("%q", x)
-	elseif typeof(x) == "function" then
-		return "function() ... end"
-	else
-		return tostring(x)
-	end
-end
-
 local function fail(
 	message: string?
 ): never
 	local quoted = {}
 	for index, param in context.params do
-		quoted[index] = quote(param)
+		quoted[index] = tiniest_quote(param)
 	end
 	local param_list = table.concat(quoted, ",")
 	error({
@@ -40,7 +30,7 @@ local function fail(
 		message = "Expectation not met" .. if message == nil then "" else `, because:\n{message}`,
 		trace = debug.traceback(nil, 4),
 		code = {
-			snippet = `expect({quote(context.target)}).{context.test}({param_list})`,
+			snippet = `expect({tiniest_quote(context.target)}).{context.test}({param_list})`,
 			line = debug.info(4, "l")
 		}
 	}, 0)
@@ -121,7 +111,7 @@ function tiniest_expect.expect(
 	)
 		check(is_indexable(a), "expect() value must be indexable")
 		check(b ~= nil, "key cannot be nil")
-		return if not a[b] then tests else fail(`[{quote(b)}] = {quote(a[b])}`)
+		return if not a[b] then tests else fail(`[{tiniest_quote(b)}] = {tiniest_quote(a[b])}`)
 	end
 
 	function tests.has_value(
@@ -150,7 +140,7 @@ function tiniest_expect.expect(
 	function tests.never_fails()
 		check(typeof(a) == "function", "expect() value must be function")
 		local ok, err = pcall(a)
-		return if ok then tests else fail(`Failed with {quote(err)}`)
+		return if ok then tests else fail(`Failed with {tiniest_quote(err)}`)
 	end
 
 	function tests.fails_with(
@@ -160,7 +150,7 @@ function tiniest_expect.expect(
 		local ok, err = pcall(a)
 		return if not ok and err:lower():match(b:lower()) then tests else
 				if ok then fail("Did not fail")
-				else fail(`Failed with {quote(err)}`)
+				else fail(`Failed with {tiniest_quote(err)}`)
 	end
 
 	function tests.never_fails_with(
