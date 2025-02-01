@@ -7,7 +7,7 @@ built on a few principles:
 
 - Simple, idiomatic Luau throughout.
 - Zero external dependencies.
-- Minimal internal dependencies.
+- Small core, extend with plugins.
 - Runtime independence.
 - No opinions about project structure.
 
