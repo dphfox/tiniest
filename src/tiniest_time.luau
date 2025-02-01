@@ -33,7 +33,7 @@ local function format_duration(
 	if seconds < 100 * MICROSECOND then
 		return `{math.ceil(seconds / MICROSECOND * 100) / 100}{suffix.micro}s`
 	elseif seconds < 100 * MILLISECOND then
-		return `{math.ceil(seconds / MICROSECOND * 100) / 100}{suffix.milli}s`
+		return `{math.ceil(seconds / MILLISECOND * 100) / 100}{suffix.milli}s`
 	else
 		return `{math.ceil(seconds * 100) / 100}s`
 	end
