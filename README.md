@@ -11,8 +11,8 @@ built on a few principles:
 - Runtime independence.
 - No opinions about project structure.
 
-`tiniest` comes with a batteries-included setup for Lune, or pick and mix your
-own modules and plugins!
+`tiniest` comes with pre-configured bundles for popular runtimes like Roblox and
+Lune, or pick and mix your own modules and plugins!
 
 ## Features
 

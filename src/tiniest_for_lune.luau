@@ -1,11 +1,11 @@
 -- From dphfox/tiniest, licenced under MIT
 --!strict
 
-local tiniest_expect = require("tiniest_expect")
-local tiniest_time = require("tiniest_time")
-local tiniest_snapshot = require("tiniest_snapshot")
-local tiniest_pretty = require("tiniest_pretty")
-local tiniest = require("tiniest")
+local tiniest_expect = require("./tiniest_expect")
+local tiniest_time = require("./tiniest_time")
+local tiniest_snapshot = require("./tiniest_snapshot")
+local tiniest_pretty = require("./tiniest_pretty")
+local tiniest = require("./tiniest")
 
 local require: any = require
 local fs = require("@lune/fs")
