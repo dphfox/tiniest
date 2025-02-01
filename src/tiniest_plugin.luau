@@ -10,6 +10,14 @@ local tiniest_plugin = {}
 function tiniest_plugin.configure(
 	plugins: {any}?
 )
+	if plugins ~= nil then
+		for index, plugin in plugins do
+			if not plugin.is_tiniest_plugin then
+				error(`sanity check: plugin #{index} is not a valid plugin`)
+			end
+		end
+	end
+	
 	local self = {}
 
 	function self.notify(

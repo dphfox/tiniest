@@ -4,26 +4,32 @@ local tiniest_expect = require("../src/tiniest_expect")
 local tiniest_time = require("../src/tiniest_time").configure({
 	get_timestamp = os.clock
 })
+local tiniest_snapshot = require("../src/tiniest_snapshot").configure({
+	load_snapshots = function(_) return nil end
+})
 local tiniest_pretty = require("../src/tiniest_pretty").configure({
-	plugins = { tiniest_time :: any }
+	plugins = { tiniest_time :: any, tiniest_snapshot }
 })
 local tiniest = require("../src/tiniest").configure({
-	plugins = { tiniest_time :: any, tiniest_pretty }
+	plugins = { tiniest_time :: any, tiniest_snapshot, tiniest_pretty }
 }) 
 
 local function my_test_suite()
 	local describe = tiniest.describe
 	local test = tiniest.test
 	local expect = tiniest_expect.expect
+	local snapshot = tiniest_snapshot.snapshot
 
 	describe("some cool features", function()
 		test("it works", function()
-			local start = os.clock()
-			repeat until os.clock() - start > 0.1
 			expect(2 + 2).is({
 				foo = 2,
 				bar = true
 			})
+		end)
+
+		test("snapshots", function()
+			snapshot(math.random(1, 2))
 		end)
 	end)
 end
