@@ -1,12 +1,6 @@
 -- From dphfox/tiniest, licenced under MIT
 --!strict
 
-local function never(
-	x: never
-): never
-	error("unreachable")
-end
-
 local function tiniest_quote(
 	x: unknown,
 	given_indent_amount: number?
