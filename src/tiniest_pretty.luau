@@ -15,6 +15,9 @@ local tiniest_pretty = {}
 function tiniest_pretty.configure(
 	options: Options
 )
+	if options.disable_unicode then
+		options.disable_emoji = true
+	end
 	local function string_len(text: string)
 		if options.disable_unicode then
 			return string.len(text)
