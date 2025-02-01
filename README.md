@@ -38,7 +38,7 @@ other. Drop them into your `lib` folder, keep the ones you need, and start using
 
 
 ## Usage
-\
+
 > *🎨 The printed reports come with colour - try it in your terminal!*
 
 Here's an example file written with `tiniest_for_lune`:
