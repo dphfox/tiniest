@@ -148,6 +148,7 @@ function tiniest_pretty.configure(
 			:gsub("true", paint.keyword)
 			:gsub("false", paint.keyword)
 			:gsub("nil", paint.keyword)
+			:gsub("%-%-.-\n", paint.dim)
 	end
 	local function indent(
 		passage: string,
