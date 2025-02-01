@@ -16,7 +16,7 @@ export type RunResult = tiniest.RunResult & {
 
 export type Options = {
 	save_snapshots: nil | (key: string, values: {string}) -> (),
-	load_snapshots: (key: string) -> {string}?
+	load_snapshots: nil | (key: string) -> {string}?
 }
 
 type TestContext = {
@@ -57,8 +57,10 @@ function tiniest_snapshot.configure(
 	function self.snapshot(
 		x: unknown
 	): ()
-		if run_context == nil or test_context == nil then
-			error("snapshot() can only be used while a test is running with tiniest_snapshot installed as a plugin", 0)
+		if options.load_snapshots == nil then
+			error("snapshot() is unavailable - snapshots have not been configured", 0)
+		elseif run_context == nil or test_context == nil then
+			error("snapshot() can only be used while a test is running with tiniest_snapshot", 0)
 		end
 
 		local snapshot_index = test_context.next_snapshot_index
@@ -127,7 +129,7 @@ function tiniest_snapshot.configure(
 		local key = get_test_key(test)
 		test_context = {
 			key = key,
-			snapshots = options.load_snapshots(key) or {},
+			snapshots = options.load_snapshots and options.load_snapshots(key) or {},
 			next_snapshot_index = 1,
 			num_updated = 0
 		}

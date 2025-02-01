@@ -12,8 +12,16 @@ local fs = require("@lune/fs")
 local luau = require("@lune/luau")
 
 export type Options = {
-	snapshot_path: string,
-	save_snapshots: boolean?
+	snapshot_path: string?,
+	save_snapshots: boolean?,
+	pretty: nil | {
+		disable_colour: boolean?,
+		disable_emoji: boolean?,
+		disable_unicode: boolean?,
+		disable_output: nil | {
+			after_run: boolean?
+		}
+	}
 }
 
 local tiniest_for_lune = {}
@@ -26,6 +34,7 @@ function tiniest_for_lune.configure(
 	local function get_path_to_snapshot(
 		key: string
 	): string
+		assert(options.snapshot_path ~= nil)
 		return `{options.snapshot_path}/{key}.snap.luau`
 	end
 
@@ -59,7 +68,7 @@ function tiniest_for_lune.configure(
 		local ok, result = pcall(function()
 			snapshots = table.clone(snapshots)
 			for index, snapshot in snapshots do
-				snapshots[index] = `"{snapshot}"`
+				snapshots[index] = `[====[{snapshot}]====]`
 			end
 			fs.writeFile(
 				get_path_to_snapshot(key),
@@ -80,12 +89,16 @@ function tiniest_for_lune.configure(
 	})
 	
 	local tiniest_snapshot = tiniest_snapshot.configure({
-		load_snapshots = load_snapshots,
+		load_snapshots = if options.snapshot_path then load_snapshots else nil,
 		save_snapshots = if options.save_snapshots then save_snapshots else nil
 	})
 	self.snapshot = tiniest_snapshot.snapshot
 
 	local tiniest_pretty = tiniest_pretty.configure({
+		disable_colour = options.pretty and options.pretty.disable_colour,
+		disable_emoji = options.pretty and options.pretty.disable_emoji,
+		disable_unicode = options.pretty and options.pretty.disable_unicode,
+		disable_output = options.pretty and options.pretty.disable_output,
 		plugins = { tiniest_time :: any, tiniest_snapshot }
 	})
 	self.format_run = tiniest_pretty.format_run

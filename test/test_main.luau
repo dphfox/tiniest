@@ -2,7 +2,7 @@
 
 local tiniest = require("../src/tiniest_for_lune").configure({
 	snapshot_path = "./test/__snapshots__",
-	-- save_snapshots = true
+	save_snapshots = true
 }) 
 
 local function my_test_suite()
@@ -13,14 +13,15 @@ local function my_test_suite()
 
 	describe("some cool features", function()
 		test("it works", function()
-			expect(2 + 2).is({
-				foo = 2,
-				bar = true
-			})
+			expect(2 + 2).is(4)
 		end)
 
 		test("snapshots", function()
-			snapshot(math.random(1, 2))
+			snapshot({
+				hello = "world",
+				foo = true,
+				bar = 2
+			})
 		end)
 	end)
 end

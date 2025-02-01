@@ -39,34 +39,39 @@ other. Drop them into your `lib` folder, keep the ones you need, and start using
 
 ## Usage
 
-Require `tiniest` in any runtime you like, then use its functions:
+Here's an example file written with `tiniest_for_lune`:
 
 ```Lua
 --!strict
 
-local tiniest = require("@tiniest").configure({
-	external = {
-		get_timestamp = os.clock
-	}
+local tiniest = require("@tiniest_for_lune").configure({
+	snapshot_path = "./test/__snapshots__",
+	save_snapshots = true
 }) 
-local tiniest_pretty = require("@tiniest_pretty").configure({})
-local tiniest_expect = require("@tiniest_expect")
 
 local function my_test_suite()
 	local describe = tiniest.describe
 	local test = tiniest.test
-	local expect = tiniest_expect.expect
+	local expect = tiniest.expect
+	local snapshot = tiniest.snapshot
 
 	describe("some cool features", function()
 		test("it works", function()
-			expect(2 + 2).is(4)
+			expect(2 + 2).is(5)
+		end)
+
+		test("snapshots", function()
+			snapshot({
+				hello = "world",
+				foo = true,
+				bar = 2
+			})
 		end)
 	end)
 end
 
 local tests = tiniest.collect_tests(my_test_suite)
-local results = tiniest.run_tests(tests)
-print(tiniest_pretty.format(results))
+tiniest.run_tests(tests, {})
 ```
 
 ## Output
@@ -76,30 +81,58 @@ print(tiniest_pretty.format(results))
 The above example generates a report like this and prints it to stdout:
 
 ```
-══════════════════════════════ Status of 1 test(s) ═════════════════════════════
+══════════════════════════════ Status of 2 test(s) ═════════════════════════════
 
-✅ some cool features ▸ it works
+✅ some cool features ▸ it works - 74.9µs
+✅ some cool features ▸ snapshots - 137.71ms
 
-═════════════════════════ 1 passed in 0.31µs, 0 failed ═════════════════════════
+══════════════════════════════ 2 passed, 0 failed ══════════════════════════════
+
+Time to run: 217.9ms
+
+════════════════════════════════════════════════════════════════════════════════
 ```
 
 Failures look like this:
 
 ```
-═════════════════════════════ Errors from 1 test(s) ════════════════════════════
+═════════════════════════════ Errors from 2 test(s) ════════════════════════════
 
 ❌ some cool features ▸ it works
 Expectation not met
-   │
-18 │ expect(4).is(5)
-   │
-[string "test/test_main"]:18
+   │ 
+16 │ expect(4).is(5)
+   │ 
+[string "test/test_main"]:16
 
-══════════════════════════════ Status of 1 test(s) ═════════════════════════════
+❌ some cool features ▸ snapshots
+Snapshot does not match
+   │ 
+78 │ snapshot({
+   │   ["bar"] = 2;
+   │   ["foo"] = true;
+   │   ["hello"] = "world";
+   │ })
+   │ 
+   │ -- snapshot on disk:
+   │ snapshot({
+   │   ["bar"] = 5;
+   │   ["foo"] = false;
+   │   ["hello"] = "earth";
+   │ })
+   │ 
 
-❌ some cool features ▸ it works
 
-═══════════════════════════ 0 passed in 0µs, 1 failed ══════════════════════════
+══════════════════════════════ Status of 2 test(s) ═════════════════════════════
+
+❌ some cool features ▸ it works - 111.6ms
+❌ some cool features ▸ snapshots - 174.9ms
+
+══════════════════════════════ 0 passed, 2 failed ══════════════════════════════
+
+Time to run: 292.81ms
+
+════════════════════════════════════════════════════════════════════════════════
 ```
 
 ## Contributions and maintenance
