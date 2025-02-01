@@ -17,7 +17,7 @@ function tiniest_plugin.configure(
 			end
 		end
 	end
-	
+
 	local self = {}
 
 	function self.notify(
@@ -30,7 +30,7 @@ function tiniest_plugin.configure(
 		for _, plugin in plugins do
 			local method = plugin[method_name]
 			if typeof(method) == "function" then
-				coroutine.wrap(method)(...)
+				method(...)
 			end
 		end
 	end

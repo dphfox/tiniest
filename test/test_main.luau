@@ -1,24 +1,15 @@
 --!strict
 
-local tiniest_expect = require("../src/tiniest_expect")
-local tiniest_time = require("../src/tiniest_time").configure({
-	get_timestamp = os.clock
-})
-local tiniest_snapshot = require("../src/tiniest_snapshot").configure({
-	load_snapshots = function(_) return nil end
-})
-local tiniest_pretty = require("../src/tiniest_pretty").configure({
-	plugins = { tiniest_time :: any, tiniest_snapshot }
-})
-local tiniest = require("../src/tiniest").configure({
-	plugins = { tiniest_time :: any, tiniest_snapshot, tiniest_pretty }
+local tiniest = require("../src/tiniest_for_lune").configure({
+	snapshot_path = "./test/__snapshots__",
+	-- save_snapshots = true
 }) 
 
 local function my_test_suite()
 	local describe = tiniest.describe
 	local test = tiniest.test
-	local expect = tiniest_expect.expect
-	local snapshot = tiniest_snapshot.snapshot
+	local expect = tiniest.expect
+	local snapshot = tiniest.snapshot
 
 	describe("some cool features", function()
 		test("it works", function()

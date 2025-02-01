@@ -123,6 +123,7 @@ function tiniest_snapshot.configure(
 		test: Test,
 		_
 	): ()
+		assert(run_context ~= nil)
 		local key = get_test_key(test)
 		test_context = {
 			key = key,
@@ -137,7 +138,8 @@ function tiniest_snapshot.configure(
 		original_run_result: tiniest.TestRunResult,
 		_
 	): ()
-		assert(run_context ~= nil and test_context ~= nil)
+		assert(run_context ~= nil)
+		assert(test_context ~= nil)
 		local run_result = original_run_result :: TestRunResult
 		run_result.num_snapshots_updated = test_context.num_updated
 		run_result.num_snapshots_obsolete = test_context.next_snapshot_index - #test_context.snapshots - 1
