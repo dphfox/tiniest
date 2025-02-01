@@ -18,6 +18,7 @@ built on a few principles:
 - Declarative `expect()` API with line numbers and code visualisation
 - Pretty-formatted summaries of reports with emoji, Unicode, and colour
 - Benchmark how long tests run for
+- Extensible, lightweight plugin system
 
 ### Planned
 
