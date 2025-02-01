@@ -92,10 +92,10 @@ function tiniest_snapshot.configure(
 			error({
 				type = "tiniest.ErrorReport",
 				message = "Snapshot does not match",
-				trace = debug.traceback(nil, 4),
+				trace = debug.traceback(nil, 2),
 				code = {
 					snippet = `snapshot({fresh_snapshot})\n\n-- snapshot on disk:\nsnapshot({snapshot_on_disk})`,
-					line = debug.info(4, "l")
+					line = debug.info(2, "l")
 				}
 			}, 0)
 		end

@@ -119,7 +119,7 @@ Snapshot does not match
    │   ["hello"] = "earth";
    │ })
    │ 
-
+[string "test/test_main"]:20
 
 ══════════════════════════════ Status of 2 test(s) ═════════════════════════════
 
