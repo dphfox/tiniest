@@ -11,6 +11,9 @@ built on a few principles:
 - Runtime independence.
 - No opinions about project structure.
 
+`tiniest` comes with a batteries-included setup for Lune, or pick and mix your
+own modules and plugins!
+
 ## Features
 
 - `test()` and `describe()` callbacks
@@ -19,18 +22,19 @@ built on a few principles:
 - Pretty-formatted summaries of reports with emoji, Unicode, and colour
 - Benchmark how long tests run for
 - Extensible, lightweight plugin system
+- Snapshot testing for all quotable data types
 
 ### Planned
 
-- Snapshots with your own serialiser
-- Test discovery with your own IO system
+- Test discovery for Lune
 
 ## Installation
 
 No installation needed!
 
 `tiniest` is distributed as a set of portable Luau files that sit next to each
-other. You can keep just the files you want to use.
+other. Drop them into your `lib` folder, keep the ones you need, and start using
+`tiniest` right away :)
 
 
 ## Usage

@@ -36,12 +36,19 @@ function tiniest_for_lune.configure(
 		if not fs.isFile(path) then
 			return nil
 		else
-			local source = fs.readFile(path)
-			local bytecode = luau.compile(source)
-			local loaded = luau.load(bytecode, {
-				injectGlobals = false
-			})
-			return loaded()
+			local ok, result = pcall(function()
+				local source = fs.readFile(path)
+				local bytecode = luau.compile(source)
+				local loaded = luau.load(bytecode, {
+					injectGlobals = false
+				})
+				return loaded()
+			end)
+			if ok then
+				return result
+			else
+				error("[tiniest_for_lune] Failed to load snapshots from disk: " .. tostring(result), 0)
+			end
 		end
 	end
 
@@ -49,7 +56,7 @@ function tiniest_for_lune.configure(
 		key: string,
 		snapshots: {string}
 	): ()
-		local ok, err = pcall(function()
+		local ok, result = pcall(function()
 			snapshots = table.clone(snapshots)
 			for index, snapshot in snapshots do
 				snapshots[index] = `"{snapshot}"`
@@ -62,7 +69,7 @@ function tiniest_for_lune.configure(
 			)
 		end)
 		if not ok then
-			error("[tiniest_for_lune] Failed to save snapshots to disk: " .. tostring(err), 0)
+			error("[tiniest_for_lune] Failed to save snapshots to disk: " .. tostring(result), 0)
 		end
 	end
 
