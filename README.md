@@ -59,7 +59,7 @@ local function my_test_suite()
 
 	describe("some cool features", function()
 		test("it works", function()
-			expect(2 + 2).is(5)
+			expect(2 + 2).is(4)
 		end)
 
 		test("snapshots", function()
