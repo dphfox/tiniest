@@ -38,6 +38,8 @@ other. Drop them into your `lib` folder, keep the ones you need, and start using
 
 
 ## Usage
+\
+> *🎨 The printed reports come with colour - try it in your terminal!*
 
 Here's an example file written with `tiniest_for_lune`:
 
@@ -73,10 +75,6 @@ end
 local tests = tiniest.collect_tests(my_test_suite)
 tiniest.run_tests(tests, {})
 ```
-
-## Output
-
-> *🎨 These examples come with colour - try it in your terminal!*
 
 The above example generates a report like this and prints it to stdout:
 
