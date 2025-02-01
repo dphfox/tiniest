@@ -24,6 +24,14 @@ built on a few principles:
 - Snapshots with your own serialiser
 - Test discovery with your own IO system
 
+## Installation
+
+No installation needed!
+
+`tiniest` is distributed as a set of portable Luau files that sit next to each
+other. You can keep just the files you want to use.
+
+
 ## Usage
 
 Require `tiniest` in any runtime you like, then use its functions:
