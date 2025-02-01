@@ -209,6 +209,15 @@ function tiniest_pretty.configure(
 				table.insert(lines, "")
 			end
 		end
+
+		local line_items = {}
+		local function add_line_items(
+			key: string,
+			value: string
+		): ()
+			table.insert(line_items, `{paint.dim(key .. ":")} {value}`)
+		end
+		plugins.notify("add_line_items", run_result, options, add_line_items)
 		
 		table.insert(lines, title(`Status of {#pretty_results} test(s)`))
 		table.insert(lines, "")
@@ -217,14 +226,14 @@ function tiniest_pretty.configure(
 		end
 		table.insert(lines, "")
 		table.insert(lines, title(`{paint.pass(`{run_result.status_tally.pass} passed`)}, {paint.fail(`{run_result.status_tally.fail} failed`)}`))
-		local function add_line_items(
-			key: string,
-			value: string
-		): ()
-			table.insert(lines, `{paint.dim(key)}: {value}`)
+		if #line_items > 0 then
+			table.insert(lines, "")
+			for _, line_item in line_items do
+				table.insert(lines, line_item)
+			end
+			table.insert(lines, "")
+			table.insert(lines, full_width_divider)
 		end
-		plugins.notify("add_line_items", run_result, options, add_line_items)
-		table.insert(lines, full_width_divider)
 
 		return table.concat(lines, "\n")
 	end
