@@ -1,12 +1,15 @@
 --!strict
 
-local tiniest = require("../src/tiniest").configure({
-	external = {
-		get_timestamp = os.clock
-	}
-}) 
-local tiniest_pretty = require("../src/tiniest_pretty").configure({})
 local tiniest_expect = require("../src/tiniest_expect")
+local tiniest_time = require("../src/tiniest_time").configure({
+	get_timestamp = os.clock
+})
+local tiniest_pretty = require("../src/tiniest_pretty").configure({
+	plugins = { tiniest_time }
+})
+local tiniest = require("../src/tiniest").configure({
+	plugins = { tiniest_time }
+}) 
 
 local function my_test_suite()
 	local describe = tiniest.describe
@@ -24,5 +27,5 @@ local function my_test_suite()
 end
 
 local tests = tiniest.collect_tests(my_test_suite)
-local results = tiniest.run_tests(tests)
+local results = tiniest.run_tests(tests, {})
 print(tiniest_pretty.format(results))

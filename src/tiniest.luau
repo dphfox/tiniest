@@ -1,6 +1,8 @@
 -- From dphfox/tiniest, licenced under MIT
 --!strict
 
+local tiniest_plugin = require("tiniest_plugin")
+
 type Context = DescribeContext | RunContext
 
 type DescribeContext = {
@@ -34,15 +36,13 @@ export type RunResult = {
 		pass: number,
 		fail: number
 	},
-	total_duration: number,
 	individual: {[Test]: TestRunResult}
 }
 
 export type TestRunResult = PassTestRunResult | FailTestRunResult
 
 export type PassTestRunResult = {
-	status: "pass",
-	duration: number
+	status: "pass"
 }
 
 export type FailTestRunResult = {
@@ -51,9 +51,16 @@ export type FailTestRunResult = {
 }
 
 export type Options = {
-	external: {
-		get_timestamp: () -> number
-	}
+	plugins: nil | {Plugin}
+}
+
+export type RunOptions = {}
+
+export type Plugin = {
+	before_run: nil | ({Test}, RunOptions) -> (),
+	after_run: nil | (RunResult, RunOptions) -> (),
+	before_test: nil | (Test, RunOptions) -> (),
+	after_test: nil | (Test, TestRunResult, RunOptions) -> ()
 }
 
 local function catch_errors(func: any, ...)
@@ -83,6 +90,9 @@ local tiniest = {}
 function tiniest.configure(
 	options: Options
 )
+
+	local plugins = tiniest_plugin.configure(options.plugins)
+
 	local get_context, with_root_context, with_inner_context
 	do
 		local current_context: Context? = nil
@@ -166,22 +176,23 @@ function tiniest.configure(
 	end
 
 	function self.run_tests(
-		tests: {Test}
+		tests: {Test},
+		run_options: RunOptions
 	): RunResult
+		plugins.notify("before_run", tests, run_options)
+
 		local context: Context = {
 			type = "run"
 		}
 		
 		local individual = {}
 		for _, test in tests do
-			local _, run_result = xpcall(
+			plugins.notify("before_test", test, run_options)
+			local _, test_run_result = xpcall(
 				function()
-					local start_time = options.external.get_timestamp()
 					with_root_context(context, test.run)
-					local end_time = options.external.get_timestamp()
 					local pass: TestRunResult = {
-						status = "pass",
-						duration = end_time - start_time
+						status = "pass"
 					}
 					return pass
 				end,
@@ -206,28 +217,26 @@ function tiniest.configure(
 					end
 				end
 			)
-			individual[test] = run_result
+			plugins.notify("after_test", test, test_run_result, run_options)
+			individual[test] = test_run_result
 		end
 
 		local status_tally = {
 			pass = 0,
 			fail = 0
 		}
-		local total_duration = 0
 
 		for _, result in individual do
 			status_tally[result.status] += 1
-			if result.status == "pass" then
-				total_duration += result.duration
-			end
 		end
 
 		local result: RunResult = {
 			tests = tests,
 			status_tally = status_tally,
-			total_duration = total_duration,
 			individual = individual
 		}
+		plugins.notify("after_run", result, run_options)
+
 		return result
 	end
 

@@ -1,13 +1,21 @@
 -- From dphfox/tiniest, licenced under MIT
 --!strict
 
+local tiniest_plugin = require("tiniest_plugin")
 local tiniest = require("tiniest")
+type TestRunResult = tiniest.TestRunResult
 type RunResult = tiniest.RunResult
 
 export type Options = {
+	plugins: nil | {Plugin},
 	disable_emoji: boolean?,
 	disable_unicode: boolean?,
 	disable_colour: boolean?
+}
+
+export type Plugin = {
+	add_annotations: nil | (TestRunResult, Options, (string) -> ()) -> (),
+	add_line_items: nil | (RunResult, Options, (string) -> ()) -> ()
 }
 
 local tiniest_pretty = {}
@@ -18,6 +26,9 @@ function tiniest_pretty.configure(
 	if options.disable_unicode then
 		options.disable_emoji = true
 	end
+
+	local plugins = tiniest_plugin.configure(options.plugins)
+
 	local function string_len(text: string)
 		if options.disable_unicode then
 			return string.len(text)
@@ -32,10 +43,6 @@ function tiniest_pretty.configure(
 	local crumb_trail = if options.disable_unicode then " > " else " ▸ "
 	local divider = if options.disable_unicode then "=" else "═"
 	local margin_line = if options.disable_unicode then "|" else "│"
-	local suffix = {
-		micro = if options.disable_unicode then "u" else "µ",
-		milli = "m",
-	}
 
 	local paint = {}
 	do
@@ -120,6 +127,7 @@ function tiniest_pretty.configure(
 	end
 
 	local LINE_LENGTH = 80
+	local full_width_divider = paint.dim(string.rep(divider, LINE_LENGTH))
 	local function title(
 		text: string
 	): string
@@ -128,20 +136,6 @@ function tiniest_pretty.configure(
 		local divider_lhs = string.rep(divider, math.ceil(divider_count))
 		local divider_rhs = string.rep(divider, math.floor(divider_count))
 		return paint.dim(divider_lhs) .. " " .. text .. " " .. paint.dim(divider_rhs)
-	end
-	local function duration(
-		seconds: number
-	): string
-		local SECOND = 1
-		local MILLISECOND = SECOND / 1000
-		local MICROSECOND = MILLISECOND / 1000
-		if seconds < 100 * MICROSECOND then
-			return `{math.ceil(seconds / MICROSECOND * 100) / 100}{suffix.micro}s`
-		elseif seconds < 100 * MILLISECOND then
-			return `{math.ceil(seconds / MICROSECOND * 100) / 100}{suffix.milli}s`
-		else
-			return `{math.ceil(seconds * 100) / 100}s`
-		end
 	end
 	local function syntax(
 		snippet: string
@@ -178,11 +172,19 @@ function tiniest_pretty.configure(
 				local style = result.status .. if index < #painted_labels then "_dim" else ""
 				painted_labels[index] = paint[style](label)
 			end
+			local annotations = ""
+			local function add_annotation(
+				annotation: string
+			): ()
+				annotations ..= ` - {annotation}`
+			end
+			plugins.notify("add_annotations", result, options, add_annotation)
 			local pretty = {
 				test = test,
 				result = result,
 				crumbs = table.concat(painted_labels, paint[result.status .. "_dim"](crumb_trail)),
-				icon = status_icons[result.status]
+				icon = status_icons[result.status],
+				annotations = paint.dim(annotations)
 			}
 			table.insert(pretty_results, pretty)
 		end
@@ -211,10 +213,18 @@ function tiniest_pretty.configure(
 		table.insert(lines, title(`Status of {#pretty_results} test(s)`))
 		table.insert(lines, "")
 		for _, pretty in pretty_results do
-			table.insert(lines, `{pretty.icon} {pretty.crumbs}`)
+			table.insert(lines, `{pretty.icon} {pretty.crumbs}{pretty.annotations}`)
 		end
 		table.insert(lines, "")
-		table.insert(lines, title(`{paint.pass(`{run_result.status_tally.pass} passed in {duration(run_result.total_duration)}`)}, {paint.fail(`{run_result.status_tally.fail} failed`)}`))
+		table.insert(lines, title(`{paint.pass(`{run_result.status_tally.pass} passed`)}, {paint.fail(`{run_result.status_tally.fail} failed`)}`))
+		local function add_line_items(
+			key: string,
+			value: string
+		): ()
+			table.insert(lines, `{paint.dim(key)}: {value}`)
+		end
+		plugins.notify("add_line_items", run_result, options, add_line_items)
+		table.insert(lines, full_width_divider)
 
 		return table.concat(lines, "\n")
 	end
