@@ -7,7 +7,7 @@ built on a few principles:
 
 - Simple, idiomatic Luau throughout.
 - Zero external dependencies.
-- Minimal internal dependencies.
+- Small core, extend with plugins.
 - Runtime independence.
 - No opinions about project structure.
 
@@ -59,7 +59,7 @@ local function my_test_suite()
 
 	describe("some cool features", function()
 		test("it works", function()
-			expect(2 + 2).is(5)
+			expect(2 + 2).is(4)
 		end)
 
 		test("snapshots", function()
