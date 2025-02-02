@@ -1,4 +1,4 @@
--- From dphfox/tiniest, licenced under MIT
+-- From dphfox/tiniest, licensed under BSD3
 --!strict
 
 local tiniest = require("./tiniest")

@@ -1,4 +1,4 @@
--- From dphfox/tiniest, licenced under MIT
+-- From dphfox/tiniest, licensed under BSD3
 --!strict
 
 type tiniest_actual = typeof(require("../src/tiniest_for_lune").configure({}))
