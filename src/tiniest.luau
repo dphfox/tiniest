@@ -1,4 +1,4 @@
--- From dphfox/tiniest, licensed under BSD3
+-- From dphfox/tiniest, licenced under MIT
 --!strict
 
 local tiniest_plugin = require("./tiniest_plugin")
@@ -104,7 +104,7 @@ function tiniest.configure(
 			local ok, err = catch_errors(inner :: any, root_context)
 			current_context = nil
 			if not ok then
-				error(err)
+				error(err.message, 0)
 			end
 		end
 
@@ -118,7 +118,7 @@ function tiniest.configure(
 			local ok, err = catch_errors(inner :: any, inner_context)
 			current_context = outer_context
 			if not ok then
-				error(err)
+				error(err.message, 0)
 			end
 		end
 	end
