@@ -70,6 +70,20 @@ function tiniest_expect.expect(
 		return if a == b then tests else fail()
 	end
 
+	function tests.is_shallow_equal(
+		b: any
+	)
+		check(typeof(a) == "table", "expect() value must be a table")
+		check(typeof(b) == "table", "is_shallow_equal() value must be a table")
+		for k, v in a do
+			check(b[k] == v, `Key [{tostring(k)}] is not equivalent. Got {tostring(v)} and {tostring(b[k])}.`)
+		end
+		for k, v in b do
+			check(a[k] == v, `Key [{tostring(k)}] is not equivalent. Got [{tostring(a[k])}] and [{tostring(v)}].`)
+		end
+		return tests
+	end
+
 	function tests.never_is(
 		b: any
 	)
