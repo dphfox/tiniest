@@ -71,18 +71,20 @@ function tiniest_expect.expect(
 	end
 
 	function tests.is_shallow_equal(
-		b: any
+		b: {[any]: any}
 	)
 		check(typeof(a) == "table", "expect() value must be a table")
 		check(typeof(b) == "table", "is_shallow_equal() value must be a table")
 		local failureReasons = {}
+		local checkedKeys = {}
 		for k, v in a do
 			if b[k] ~= v then
 				table.insert(failureReasons, `Key [{tostring(k)}] is not equivalent. Got {tostring(v)} and {tostring(b[k])}.`)
 			end
+			checkedKeys[k] = true
 		end
 		for k, v in b do
-			if a[k] ~= v then
+			if a[k] ~= v and checkedKeys[k] ~= true then
 				table.insert(failureReasons, `Key [{tostring(k)}] is not equivalent. Got {tostring(a[k])} and {tostring(v)}.`)
 			end
 		end
@@ -90,16 +92,17 @@ function tiniest_expect.expect(
 	end
 
 	function tests.is_deep_equal(
-		b: any
+		b: {[any]: any}
 	)
 		check(typeof(a) == "table", "expect() value must be a table")
 		check(typeof(b) == "table", "is_deep_equal() value must be a table")
-		
 		local failureReasons = {}
-	
-		local function deep_check(a, b, path: string)
+		local checkedKeys = {}
+		local function deep_check(a: any, b: any, path: string)
 			for k, v in a do
 				local new_path = path .. "[" .. tostring(k) .. "]"
+				checkedKeys[new_path] = true
+	
 				if typeof(v) == "table" and typeof(b[k]) == "table" then
 					deep_check(v, b[k], new_path)
 				elseif b[k] ~= v then
@@ -108,7 +111,7 @@ function tiniest_expect.expect(
 			end
 			for k, v in b do
 				local new_path = path .. "[" .. tostring(k) .. "]"
-				if typeof(v) ~= "table" and a[k] ~= v then
+				if checkedKeys[new_path] ~= true and a[k] ~= v then
 					table.insert(failureReasons, `Key {new_path} is not equivalent. Got {tostring(a[k])} and {tostring(v)}.`)
 				end
 			end
