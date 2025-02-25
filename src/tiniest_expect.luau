@@ -89,6 +89,35 @@ function tiniest_expect.expect(
 		return if #failureReasons == 0 then tests else fail(table.concat(failureReasons, "\n"))
 	end
 
+	function tests.is_deep_equal(
+		b: any
+	)
+		check(typeof(a) == "table", "expect() value must be a table")
+		check(typeof(b) == "table", "is_deep_equal() value must be a table")
+		
+		local failureReasons = {}
+	
+		local function deep_check(a, b, path: string)
+			for k, v in a do
+				local new_path = path .. "[" .. tostring(k) .. "]"
+				if typeof(v) == "table" and typeof(b[k]) == "table" then
+					deep_check(v, b[k], new_path)
+				elseif b[k] ~= v then
+					table.insert(failureReasons, `Key {new_path} is not equivalent. Got {tostring(v)} and {tostring(b[k])}.`)
+				end
+			end
+			for k, v in b do
+				local new_path = path .. "[" .. tostring(k) .. "]"
+				if typeof(v) ~= "table" and a[k] ~= v then
+					table.insert(failureReasons, `Key {new_path} is not equivalent. Got {tostring(a[k])} and {tostring(v)}.`)
+				end
+			end
+		end
+	
+		deep_check(a, b, "")
+		return if #failureReasons == 0 then tests else fail(table.concat(failureReasons, "\n"))
+	end
+
 	function tests.never_is(
 		b: any
 	)
