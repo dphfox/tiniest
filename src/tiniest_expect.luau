@@ -75,13 +75,18 @@ function tiniest_expect.expect(
 	)
 		check(typeof(a) == "table", "expect() value must be a table")
 		check(typeof(b) == "table", "is_shallow_equal() value must be a table")
+		local failureReasons = {}
 		for k, v in a do
-			check(b[k] == v, `Key [{tostring(k)}] is not equivalent. Got {tostring(v)} and {tostring(b[k])}.`)
+			if b[k] ~= v then
+				table.insert(failureReasons, `Key [{tostring(k)}] is not equivalent. Got {tostring(v)} and {tostring(b[k])}.`)
+			end
 		end
 		for k, v in b do
-			check(a[k] == v, `Key [{tostring(k)}] is not equivalent. Got [{tostring(a[k])}] and [{tostring(v)}].`)
+			if a[k] ~= v then
+				table.insert(failureReasons, `Key [{tostring(k)}] is not equivalent. Got {tostring(a[k])} and {tostring(v)}.`)
+			end
 		end
-		return tests
+		return if #failureReasons == 0 then tests else fail(table.concat(failureReasons, "\n"))
 	end
 
 	function tests.never_is(
