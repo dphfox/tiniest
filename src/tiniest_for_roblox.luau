@@ -1,4 +1,4 @@
--- From dphfox/tiniest, licenced under MIT
+-- From dphfox/tiniest, licenced under BSD
 --!strict
 
 local tiniest_expect = require("./tiniest_expect")
