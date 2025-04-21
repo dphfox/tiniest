@@ -128,7 +128,7 @@ function tiniest_expect.expect(
 		check(typeof(a) == "table", "expect() value must be table")
 		check(b ~= nil, "value cannot be nil")
 		local index = table.find(a, b)
-		return if index ~= nil then tests else fail(`Found at index {index}`)
+		return if index == nil then tests else fail(`Found at index {index}`)
 	end
 
 	function tests.fails()
