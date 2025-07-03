@@ -17,6 +17,8 @@ type RunContext = {
 
 export type ErrorReport = {
 	type: "tiniest.ErrorReport",
+	line: number,
+	source: string,
 	message: string,
 	trace: string,
 	code: {
@@ -63,8 +65,11 @@ local function catch_errors(func: any, ...)
 		if typeof(message) == "table" and message.type == "tiniest.ErrorReport" then
 			report = message :: ErrorReport
 		else
+			local source, line = debug.info(2, "sl")
 			report = {
 				type = "tiniest.ErrorReport",
+				line = line,
+				source = source,
 				message = tostring(message),
 				trace = debug.traceback(nil, 2)
 			}
@@ -197,8 +202,11 @@ function tiniest.configure(
 						}
 						return fail
 					else
+						local source, line = debug.info(1, "sl")
 						local error: ErrorReport = {
 							type = "tiniest.ErrorReport",
+							line = line,
+							source = source,
 							message = tostring(message),
 							trace = debug.traceback()
 						}
