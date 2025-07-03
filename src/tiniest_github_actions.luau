@@ -49,7 +49,7 @@ function tiniest_github_actions.configure(
 			
 			-- need to URL encode new lines for them to show up
 			message = string.gsub(message, "\n", "%%0A")
-			print(`::error file="{file}",line={err.line},title="{title}"::{message}`)
+			print(`::error file={file},line={err.line},title={title}::{message}`)
 		end
 	end
 
