@@ -41,8 +41,15 @@ function tiniest_github_actions.configure(
 			local err = result.error
 			local file = extract_filename(err.source)
 			local title = table.concat(test.labels, " > ")
+
+			local message = err.message
+			if err.code then
+				message = `{message}\n  {err.code.snippet}`
+			end
 			
-			print(`::error file="{file}",line={err.line},title="{title}"::{err.message}`)
+			-- need to URL encode new lines for them to show up
+			message = string.gsub(message, "\n", "%%0A")
+			print(`::error file="{file}",line={err.line},title="{title}"::{message}`)
 		end
 	end
 
